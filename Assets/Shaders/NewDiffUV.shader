@@ -1,4 +1,4 @@
-//a somewhat improved version of the legacy specular shader
+//a somewhat improved version of the legacy diffuse shader
 //it doesn't support lightmapping, so this one is only for dynamic objects
 //it is based on kyle halladay's "better diffuse" shader (http://kylehalladay.com/blog/tutorial/bestof/2013/10/13/Multi-Light-Diffuse.html)
 //some improvements came from reading the tutorials on catlikecoding (http://catlikecoding.com/unity/tutorials/)
@@ -10,13 +10,11 @@
 // > remove the corresponding part in the fragment shader
 //shadesh9 could be moved into the fragment shader
 
-Shader "Custom/SpecUVSpecMap"{
+Shader "Custom/NewDiffUV"{
 
 	Properties{
 		_Color ("Main Color", Color) = (1,1,1,1)
 		_MainTex ("Base (RGB) Alpha (A)", 2D) = "white" {}
-		_SpecHardness ("Specular Hardness", Range(0,1)) = 0.5
-		_SpecColor ("Specular Color", 2D) = "white" {}
 	}
 
 	SubShader{
@@ -43,9 +41,6 @@ Shader "Custom/SpecUVSpecMap"{
 			float4 _MainTex_ST;
 			fixed4 _Color;
 			fixed4 _LightColor0;
-
-			half _SpecHardness;
-			sampler2D _SpecColor;
 
 			struct vertex_input{
 				float4 vertex : POSITION;
@@ -101,16 +96,10 @@ Shader "Custom/SpecUVSpecMap"{
 					atten = saturate(atten + shadowFade);
 				#endif
 
-				float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
-				float3 halfVector = normalize(i.lightDir + viewDir);
-				fixed3 spec = atten * lightColor * pow(saturate(dot(halfVector, i.worldNormal)), _SpecHardness * 100); 
-
 				fixed4 tex = tex2D(_MainTex, i.uv) * _Color;
-				fixed4 specCol = tex2D(_SpecColor, i.uv);
 				fixed diff = saturate(dot(i.worldNormal, i.lightDir));
 				fixed4 c;
-				c.rgb = tex.rgb * (i.amb + (diff * atten * lightColor));
-				c.rgb += (spec * specCol);
+				c.rgb = fixed4(tex.rgb * (i.amb + (diff * atten * lightColor)), 1);
 				c.a = tex.a;
 
 				UNITY_APPLY_FOG(i.fogCoord, c);
@@ -138,9 +127,6 @@ Shader "Custom/SpecUVSpecMap"{
 			float4 _MainTex_ST;
 			fixed4 _Color;
 			fixed4 _LightColor0;
-
-			half _SpecHardness;
-			sampler2D _SpecColor;
 
 			struct v2f{
 				float4 pos			: SV_POSITION;
@@ -175,16 +161,10 @@ Shader "Custom/SpecUVSpecMap"{
 				fixed atten = LIGHT_ATTENUATION(i);
 				fixed3 lightColor = _LightColor0.rgb;
 
-				float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
-				float3 halfVector = normalize(i.lightDir + viewDir);
-				fixed3 spec = atten * lightColor * pow(saturate(dot(halfVector, i.worldNormal)), _SpecHardness * 100); 
-
 				fixed4 tex = tex2D(_MainTex, i.uv) * _Color;
-				fixed4 specCol = tex2D(_SpecColor, i.uv);
 				fixed diff = saturate(dot(i.worldNormal, i.lightDir));
 				fixed4 c;
 				c.rgb = tex.rgb * diff * atten * lightColor;
-				c.rgb += (spec * specCol);
 				c.a = tex.a;
 
 				#if FOG_ON
@@ -200,3 +180,44 @@ Shader "Custom/SpecUVSpecMap"{
     }
     FallBack "VertexLit"
 }
+
+//two versions of vertex lighting
+
+//version 1 (idk, i think it's right, it's the same as the Shade4PointLights thingy)
+
+/*
+
+#ifdef VERTEXLIGHT_ON
+for (int index = 0; index < 4; index++){    
+	float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
+	float3 vertexToLightSource = float3(lightPosition.xyz - o.worldPos.xyz);        
+	float3 lightDirection = normalize(vertexToLightSource);
+	float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
+	float attenuation = 1.0 / (1.0  + unity_4LightAtten0[index] * squaredDistance);
+	float3 diffuseReflection = attenuation * float3(unity_LightColor[index].rgb) * float3(_Color.rgb) * max(0.0, dot(o.worldNormal, lightDirection));         
+	o.vertexLighting = o.vertexLighting + diffuseReflection;
+}
+#endif
+
+
+*/
+
+//version 2 (brightness increases with scale. shouldn't be an issue with normal models but with quads and stuff it is) when worldN gets normalized its the same as the one above
+
+/*
+
+#ifdef VERTEXLIGHT_ON
+float3 worldN = mul((float3x3)unity_ObjectToWorld, SCALED_NORMAL);
+float4 worldP = mul(unity_ObjectToWorld, v.vertex);
+for (int index = 0; index < 4; index++){    
+	float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
+	float3 vertexToLightSource = float3(lightPosition.xyz - worldP.xyz);        
+	float3 lightDirection = normalize(vertexToLightSource);
+	float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
+	float attenuation = 1.0 / (1.0  + unity_4LightAtten0[index] * squaredDistance);
+	float3 diffuseReflection = attenuation * float3(unity_LightColor[index].rgb) * float3(_Color.rgb) * max(0.0, dot(worldN, lightDirection));         
+	o.vertexLighting = o.vertexLighting + diffuseReflection;
+}
+#endif
+
+*/

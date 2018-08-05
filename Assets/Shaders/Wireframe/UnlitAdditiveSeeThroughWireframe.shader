@@ -27,7 +27,7 @@
 			#define WIRES_ADDITIVE
 
 			#include "UnityCG.cginc"
-			#include "Wireframes.cginc"
+			#include "UnlitWireframes.cginc"
 
 			ENDCG
 		}

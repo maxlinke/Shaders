@@ -21,7 +21,7 @@
 			#pragma multi_compile_fog
 
 			#include "UnityCG.cginc"
-			#include "Wireframes.cginc"
+			#include "UnlitWireframes.cginc"
 
 			ENDCG
 		}

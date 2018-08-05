@@ -10,7 +10,7 @@
 // > remove the corresponding part in the fragment shader
 //shadesh9 could be moved into the fragment shader
 
-Shader "Custom/DiffuseUV"{
+Shader "Custom/DiffUV"{
 
 	Properties{
 		_Color ("Main Color", Color) = (1,1,1,1)
