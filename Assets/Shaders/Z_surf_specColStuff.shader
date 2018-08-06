@@ -7,9 +7,8 @@ Shader "Custom/Z_surf_specColStuff" {
 		_SpecularColor ("Specular Color Multiplier", Color) = (1, 1, 1, 1)
 		_MainTex ("Main Texture", 2D) = "white" {}
 		_SpecMap ("Specular Color", 2D) = "white" {}
-		_NormMap ("Normal Map", 2D) = "bump" {}
 		_Hardness ("Specular Hardness", Range(0.0, 1.0)) = 0.5
-		_Glossiness ("Glossiness", Range(0.0, 1.0)) = 1.0
+		_Glossiness ("Glossiness", Range(0.0, 2.0)) = 1.0
 	}
 
 	SubShader {
@@ -62,7 +61,7 @@ Shader "Custom/Z_surf_specColStuff" {
     		data.diffuseColor   = s.Albedo;
     		data.occlusion      = 1;
     		// PI factor come from StandardBDRF (UnityStandardBRDF.cginc:351 for explanation)
-    		data.specularColor  = s.GlossColor.rgb * s.Gloss;
+    		data.specularColor  = s.GlossColor.rgb * s.Gloss * (1.0 / UNITY_PI);	//<- why pi? idk...
     		data.smoothness     = s.Specular;
     		data.normalWorld    = s.Normal;
 		
@@ -106,21 +105,19 @@ Shader "Custom/Z_surf_specColStuff" {
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_SpecMap;
-			float2 uv_NormTex;
 		};
 
 		fixed4 _Color;
 		fixed4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _SpecMap;
-		sampler2D _NormTex;
 		float _Hardness;
 		float _Glossiness;
 
 		void surf (Input IN, inout MySurfaceOutput o){
 			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb * _Color;
 			half4 spec = tex2D (_SpecMap, IN.uv_SpecMap);
-			o.Normal = UnpackNormal(tex2D(_NormTex, IN.uv_NormTex));
+//			o.Normal = UnpackNormal(tex2D(_NormTex, IN.uv_NormTex));
 			o.GlossColor = spec.rgb * _SpecularColor;
 			o.Specular = _Hardness;
 			o.Gloss = _Glossiness;
