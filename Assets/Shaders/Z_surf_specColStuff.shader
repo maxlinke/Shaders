@@ -3,6 +3,8 @@
 Shader "Custom/Z_surf_specColStuff" {
 
 	Properties {
+		_Color ("Color", Color) = (1, 1, 1, 1)
+		_SpecularColor ("Specular Color Multiplier", Color) = (1, 1, 1, 1)
 		_MainTex ("Main Texture", 2D) = "white" {}
 		_SpecMap ("Specular Color", 2D) = "white" {}
 		_NormMap ("Normal Map", 2D) = "bump" {}
@@ -27,20 +29,6 @@ Shader "Custom/Z_surf_specColStuff" {
 			half Alpha;
 		};
 
-//		inline half4 LightingColoredSpecular (MySurfaceOutput s, half3 lightDir, half3 viewDir, half atten){
-//			half3 halfVector = normalize (lightDir + viewDir);
-//			float spec = pow(saturate(dot(halfVector, s.Normal)), s.Specular * 100); 
-//			half diff = saturate(dot (s.Normal, lightDir));
-//			half4 c;
-//			c.rgb = diff * atten * _LightColor0.rgb * s.Albedo;
-////			c.rgb = (s.Albedo * _LightColor0.rgb * diff) * (atten * 2);
-//			c.rgb += spec * atten * _LightColor0.rgb * s.GlossColor;
-//			c.a = s.Alpha;
-//			return c;
-//		}
-		
-		// NOTE: some intricacy in shader compiler on some GLES2.0 platforms (iOS) needs 'viewDir' & 'h'
-		// to be mediump instead of lowp, otherwise specular highlight becomes too bright.
 		inline fixed4 UnityBlinnPhongLight (MySurfaceOutput s, half3 viewDir, UnityLight light)
 		{
 			half3 normedNormal = normalize(s.Normal);
@@ -65,7 +53,7 @@ Shader "Custom/Z_surf_specColStuff" {
         		c.rgb += s.Albedo * gi.indirect.diffuse;
     		#endif
 		
-    		return c * UNITY_PI;	//<- wtf why
+    		return c;
 		}
 
 		inline half4 LightingColoredSpecular_Deferred (MySurfaceOutput s, half3 viewDir, UnityGI gi, out half4 outGBuffer0, out half4 outGBuffer1, out half4 outGBuffer2)
@@ -86,7 +74,7 @@ Shader "Custom/Z_surf_specColStuff" {
         		emission.rgb += s.Albedo * gi.indirect.diffuse;
     		#endif
 		
-    		return emission * UNITY_PI;
+    		return emission;
 		}
 		
 		inline void LightingColoredSpecular_GI (
@@ -112,7 +100,7 @@ Shader "Custom/Z_surf_specColStuff" {
     		fixed4 c;
     		c.rgb = (s.Albedo * light.rgb + light.rgb * s.GlossColor.rgb * spec);
     		c.a = s.Alpha;
-    		return c * UNITY_PI;
+    		return c;
 		}
 
 		struct Input {
@@ -121,6 +109,8 @@ Shader "Custom/Z_surf_specColStuff" {
 			float2 uv_NormTex;
 		};
 
+		fixed4 _Color;
+		fixed4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _SpecMap;
 		sampler2D _NormTex;
@@ -128,10 +118,10 @@ Shader "Custom/Z_surf_specColStuff" {
 		float _Glossiness;
 
 		void surf (Input IN, inout MySurfaceOutput o){
-			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb * 0.3;
+			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb * _Color;
 			half4 spec = tex2D (_SpecMap, IN.uv_SpecMap);
 			o.Normal = UnpackNormal(tex2D(_NormTex, IN.uv_NormTex));
-			o.GlossColor = spec.rgb;
+			o.GlossColor = spec.rgb * _SpecularColor;
 			o.Specular = _Hardness;
 			o.Gloss = _Glossiness;
 		}
