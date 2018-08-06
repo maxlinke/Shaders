@@ -1,7 +1,7 @@
 ﻿Shader "Custom/Glowing/Depthmapped Hologram"{
 
 	Properties{
-		_MainTex ("Texture", 2D) = "white" {}
+		_MainTex ("Texture", 2D) = "grey" {}
 		_Color ("Color", Color) = (1,1,1,1)
 		_ColorAdd ("Color Addition", Color) = (0,0,0,0)
 		_ColorPow ("Color Power", Range(0,10)) = 1.0
@@ -55,11 +55,6 @@
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 				o.vertex = UnityObjectToClipPos(v.vertex + (v.normal * pow(o.col.r, _ExtrusionPower) * _Extrusion));
 				UNITY_TRANSFER_FOG(o, o.vertex);
-
-				#if defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2)
-					#define FOG_ON 1
-				#endif
-
 				return o;
 			}
 			
@@ -68,12 +63,7 @@
 				c.rgb = pow(c.rgb, _ColorPow);
 				c.rgb += _ColorAdd;
 				c.rgb *= _Color;
-
-				#if FOG_ON
-					UNITY_CALC_FOG_FACTOR_RAW(length(_WorldSpaceCameraPos - i.worldPos.xyz));
-					c.rgb = lerp(fixed3(0,0,0), c.rgb, saturate(unityFogFactor));
-				#endif
-
+				UNITY_APPLY_FOG_COLOR(i.fogCoord, c, fixed4(0,0,0,1));
 				return c;
 			}
 

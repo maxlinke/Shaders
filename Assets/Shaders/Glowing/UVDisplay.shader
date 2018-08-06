@@ -1,7 +1,8 @@
 ﻿Shader "Custom/Glowing/UV Display"{
 
-	Properties
-	{}
+	Properties{
+		_Blue ("Blue", Range(0,1)) = 0.5
+	}
 
 	SubShader{
 
@@ -16,6 +17,8 @@
 			#pragma multi_compile_fog
 			
 			#include "UnityCG.cginc"
+
+			fixed _Blue;
 
 			struct appdata{
 				float4 vertex : POSITION;
@@ -37,7 +40,7 @@
 			}
 			
 			fixed4 frag (v2f i) : SV_Target{
-				fixed4 col = fixed4(i.uv,1,1);
+				fixed4 col = fixed4(i.uv, _Blue, 1);
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				return col;
 			}

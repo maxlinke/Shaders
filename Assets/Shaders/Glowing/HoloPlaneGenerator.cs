@@ -6,14 +6,16 @@ public class HoloPlaneGenerator : MonoBehaviour {
 
 	public MeshFilter meshFilter;
 
-	[Range(1,1024)]
-	public int xResolution;
-	[Range(1,1024)]
-	public int yResolution;
-	[Range(0f,1f)]
-	public float subQuadScale;
+	[Range(1,1024)] [SerializeField] int xResolution;
+	[Range(1,1024)] [SerializeField] int yResolution;
+	[Range(0f,1f)] [SerializeField] float subQuadScale;
+	[SerializeField] bool generateOnStart;
 		
 	void Start () {
+		if(generateOnStart) Generate();
+	}
+
+	public void Generate () {
 		Vector2 quadSize = new Vector2(subQuadScale / (float)xResolution, subQuadScale / (float)yResolution);
 		quadSize *= 0.5f;
 		Vector3 normal = new Vector3(0,0,-1);
@@ -82,8 +84,5 @@ public class HoloPlaneGenerator : MonoBehaviour {
 		meshFilter.mesh.uv = texcoords;
 		meshFilter.mesh.triangles = indices;
 	}
-	
-	void Update () {
-		
-	}
+
 }
