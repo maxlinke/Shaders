@@ -77,12 +77,13 @@ public class HoloPlaneGenerator : MonoBehaviour {
 
 		}
 
-		meshFilter.mesh = new Mesh();
-		meshFilter.mesh.name = "Custom Plane";
-		meshFilter.mesh.vertices = vertices;
-		meshFilter.mesh.normals = normals;
-		meshFilter.mesh.uv = texcoords;
-		meshFilter.mesh.triangles = indices;
+		Mesh mesh = new Mesh();
+		mesh.name = "Custom Plane";
+		mesh.vertices = vertices;
+		mesh.normals = normals;
+		mesh.uv = texcoords;
+		mesh.triangles = indices;
+		meshFilter.sharedMesh = mesh;
 	}
 
 }
