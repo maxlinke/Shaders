@@ -62,7 +62,7 @@
 			
 			fixed4 frag (v2f i) : SV_Target{
 				float base = _Intensity * saturate(1-(i.viewDot / _Sharpness));
-				float t = _Time.x * _Speed * 20.0;
+				float t = _Time.y * _Speed;
 				float p = i.worldPos.y;
 				float lines = abs(sin(UNITY_PI * (p + t) * _LineCount));
 				float v = base * smoothstep(_LowerBound, _UpperBound, lines);
