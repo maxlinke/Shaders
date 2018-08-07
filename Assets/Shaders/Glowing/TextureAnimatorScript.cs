@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class TextureAnimatorScript : MonoBehaviour {
 
-	/*
-	 *	IMPORTANT :
-	 *	make sure there's only ONE instance of this script per animated material
-	 *	
-	 */
-
 	public Material mat;
 	public Texture[] textures;
 	public float delay;
@@ -19,10 +13,6 @@ public class TextureAnimatorScript : MonoBehaviour {
 		texIndex = 0;
 		mat.mainTexture = textures[texIndex];
 		StartCoroutine(TextureSwitcher(delay));
-	}
-	
-	void Update () {
-		
 	}
 
 	IEnumerator TextureSwitcher(float delay){

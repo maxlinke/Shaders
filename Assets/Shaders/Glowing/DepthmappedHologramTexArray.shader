@@ -33,12 +33,8 @@
 			float _Speed;
 
 			fixed4 sampleTexture(float2 uv){
-//				return tex2Dlod(_MainTex, float4(uv,0,0));
 				float t = _Time.y * _Speed;
 				t = fmod(t, _Number) - 0.5;
-//				t *= _Number;
-//				t = frac(t);
-//				t /= _Number;
 				return UNITY_SAMPLE_TEX2DARRAY_LOD(_TexArray, float3(uv, t), 0);
 			}
 
