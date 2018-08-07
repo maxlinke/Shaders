@@ -1,8 +1,4 @@
-Shader "Custom/WorldPosLit"{
-
-	Properties{
-
-	}
+Shader "Custom/VertFrag/WorldPosLit"{
 
 	SubShader{
     

@@ -1,6 +1,4 @@
-﻿Shader "Custom/surf_WorldPosLit" {
-
-	Properties {}
+﻿Shader "Custom/WorldPosLit" {
 
 	SubShader {
 
@@ -22,10 +20,7 @@
 		}
 
 		void surf (Input IN, inout SurfaceOutput o) {
-			fixed4 c;
-			c.rgb = IN.worldPos.xyz - floor(IN.worldPos.xyz);
-			c.a = 1.0;
-
+			fixed4 c = fixed4(frac(IN.worldPos.xyz), 1.0);
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
 		}

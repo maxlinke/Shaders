@@ -32,13 +32,13 @@
 			float _Number;
 			float _Speed;
 
-			fixed4 sampleTexture(float2 uv){
+			inline fixed4 sampleTexture(float2 uv){
 				float t = _Time.y * _Speed;
 				t = fmod(t, _Number) - 0.5;
 				return UNITY_SAMPLE_TEX2DARRAY_LOD(_TexArray, float3(uv, t), 0);
 			}
 
-			float2 transformUV(float2 uv){
+			inline float2 transformUV(float2 uv){
 				return uv;
 			}
 

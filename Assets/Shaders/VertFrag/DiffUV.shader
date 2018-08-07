@@ -10,7 +10,7 @@
 // > remove the corresponding part in the fragment shader
 //shadesh9 could be moved into the fragment shader
 
-Shader "Custom/NewDiffUV"{
+Shader "Custom/VertFrag/DiffUV"{
 
 	Properties{
 		_Color ("Main Color", Color) = (1,1,1,1)

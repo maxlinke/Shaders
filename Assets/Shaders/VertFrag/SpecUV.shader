@@ -1,4 +1,4 @@
-//a somewhat improved version of the legacy diffuse shader
+//a somewhat improved version of the legacy specular shader
 //it doesn't support lightmapping, so this one is only for dynamic objects
 //it is based on kyle halladay's "better diffuse" shader (http://kylehalladay.com/blog/tutorial/bestof/2013/10/13/Multi-Light-Diffuse.html)
 //some improvements came from reading the tutorials on catlikecoding (http://catlikecoding.com/unity/tutorials/)
@@ -10,12 +10,13 @@
 // > remove the corresponding part in the fragment shader
 //shadesh9 could be moved into the fragment shader
 
-Shader "Custom/DiffEmissiveUV"{
+Shader "Custom/VertFrag/SpecUV"{
 
 	Properties{
 		_Color ("Main Color", Color) = (1,1,1,1)
 		_MainTex ("Base (RGB) Alpha (A)", 2D) = "white" {}
-		_EmissionTex ("Emissive Color (RGB)", 2D) = "black" {}
+		_SpecHardness ("Specular Hardness", Range(0,1)) = 0.5
+		_SpecColor ("Specular Color", Color) = (1,1,1,1)
 	}
 
 	SubShader{
@@ -39,10 +40,12 @@ Shader "Custom/DiffEmissiveUV"{
 			#include "UnityShadowLibrary.cginc"
 
 			sampler2D _MainTex;
-			sampler2D _EmissionTex;
 			float4 _MainTex_ST;
 			fixed4 _Color;
 			fixed4 _LightColor0;
+
+			half _SpecHardness;
+			fixed4 _SpecColor;
 
 			struct vertex_input{
 				float4 vertex : POSITION;
@@ -98,11 +101,15 @@ Shader "Custom/DiffEmissiveUV"{
 					atten = saturate(atten + shadowFade);
 				#endif
 
-				fixed4 tex = tex2D(_MainTex, i.uv) * _Color;
+				float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
+				float3 halfVector = normalize(i.lightDir + viewDir);
+				fixed3 spec = atten * lightColor * _SpecColor * pow(saturate(dot(halfVector, i.worldNormal)), _SpecHardness * 100); 
+
+				fixed4 tex = tex2D(_MainTex, i.uv) * _Color;;
 				fixed diff = saturate(dot(i.worldNormal, i.lightDir));
 				fixed4 c;
-				c.rgb = fixed4(tex.rgb * (i.amb + (diff * atten * lightColor)), 1);
-				c.rgb += tex2D(_EmissionTex, i.uv);
+				c.rgb = tex.rgb * (i.amb + (diff * atten * lightColor));
+				c.rgb += spec;
 				c.a = tex.a;
 
 				UNITY_APPLY_FOG(i.fogCoord, c);
@@ -130,6 +137,9 @@ Shader "Custom/DiffEmissiveUV"{
 			float4 _MainTex_ST;
 			fixed4 _Color;
 			fixed4 _LightColor0;
+
+			half _SpecHardness;
+			fixed4 _SpecColor;
 
 			struct v2f{
 				float4 pos			: SV_POSITION;
@@ -164,10 +174,15 @@ Shader "Custom/DiffEmissiveUV"{
 				fixed atten = LIGHT_ATTENUATION(i);
 				fixed3 lightColor = _LightColor0.rgb;
 
+				float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos.xyz);
+				float3 halfVector = normalize(i.lightDir + viewDir);
+				fixed3 spec = atten * lightColor * _SpecColor * pow(saturate(dot(halfVector, i.worldNormal)), _SpecHardness * 100); 
+
 				fixed4 tex = tex2D(_MainTex, i.uv) * _Color;
 				fixed diff = saturate(dot(i.worldNormal, i.lightDir));
 				fixed4 c;
 				c.rgb = tex.rgb * diff * atten * lightColor;
+				c.rgb += spec;
 				c.a = tex.a;
 
 				#if FOG_ON

@@ -29,11 +29,11 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
-			fixed4 sampleTexture(float2 uv){
+			inline fixed4 sampleTexture(float2 uv){
 				return tex2Dlod(_MainTex, float4(uv,0,0));
 			}
 
-			float2 transformUV(float2 uv){
+			inline float2 transformUV(float2 uv){
 				return TRANSFORM_TEX(uv, _MainTex);
 			}
 
