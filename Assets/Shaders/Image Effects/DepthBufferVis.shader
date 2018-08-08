@@ -2,6 +2,7 @@
 
 	Properties{
 		[HideInInspector] _MainTex ("Texture", 2D) = "white" {}
+		_Linear ("Unaffected or linear", Range(0,1)) = 1.0
 	}
 
 	SubShader{
@@ -21,6 +22,8 @@
 			float4 _MainTex_ST;
 			half4 _MainTex_TexelSize;
 			sampler2D _CameraDepthTexture;
+
+			float _Linear;
 
 			struct appdata{
 				float4 vertex : POSITION;
@@ -43,12 +46,16 @@
 			}
 			
 			fixed4 frag (v2f i) : SV_Target{
-				fixed4 col = tex2D(_MainTex, i.uv);
-//				float depth = DecodeFloatRG(tex2D(_CameraDepthTexture, i.uv));
-				float depth = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv));
-//				depth = Linear01Depth(depth);
-				col = depth;
-//				col = frac(depth);
+				float rawDepth = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv));
+
+				float linearDepth = Linear01Depth(rawDepth);
+				float nearFar = _ProjectionParams.y / _ProjectionParams.z;
+				linearDepth -= nearFar;
+				linearDepth /= (1 - nearFar);
+				linearDepth = 1 - linearDepth;
+
+				fixed4 col;
+				col.rgb = lerp(rawDepth, linearDepth, _Linear);
 				col.a = 1.0;
 				return col;
 			}

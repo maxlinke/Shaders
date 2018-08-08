@@ -1,4 +1,4 @@
-﻿Shader "Custom/Glowing/Worldpos"{
+﻿Shader "Custom/Glowing/WorldPos"{
 	
 	SubShader{
 
