@@ -32,3 +32,12 @@ inline half4 LightingCustomBlinnPhong (CustomSurfaceOutput s, half3 lightDir, ha
 	c.a = s.Alpha;
 	return c;
 }
+
+//inline half4 LightingCustomBlinnPhong_Deferred (CustomSurfaceOutput s, half3 viewDir, UnityGI gi, out half4 outDiffuseOcclusion, out half4 outSpecSmoothness, out half4 outNormal) {
+//
+//	outDiffuseOcclusion = half4(1,1,1,1);
+//	outSpecSmoothness = half4(0,0,0,0);
+//	outNormal = s.Normal;
+//
+//	return s.Emission;
+//}
