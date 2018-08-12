@@ -1,8 +1,8 @@
-﻿Shader "Custom/Image Effects/Luminance to gradient"{
+﻿Shader "Custom/Image Effects/Tint"{
 
 	Properties{
 		[HideInInspector] _MainTex ("Texture", 2D) = "white" {}
-		_Gradient ("Gradient", 2D) = "white" {}
+		_TintColor ("Tint Color", Color) = (1,1,1,1)
 	}
 
 	SubShader{
@@ -23,7 +23,7 @@
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			sampler2D _Gradient;
+			fixed4 _TintColor;
 
 			struct appdata{
 				float4 vertex : POSITION;
@@ -44,8 +44,8 @@
 			
 			fixed4 frag (v2f i) : SV_Target{
 				fixed4 tex = tex2D(_MainTex, i.uv);
-				half lum = 0.299 * tex.r + 0.587 * tex.g + 0.114 * tex.b;
-				return tex2D(_Gradient, half2(lum, 0.5));
+				fixed4 col = tex * _TintColor;
+				return col;
 			}
 			ENDCG
 		}

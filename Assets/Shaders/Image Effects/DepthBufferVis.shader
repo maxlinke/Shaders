@@ -3,9 +3,14 @@
 	Properties{
 		[HideInInspector] _MainTex ("Texture", 2D) = "white" {}
 		_Linear ("Unaffected or linear", Range(0,1)) = 1.0
+		_Power ("Power (depth^n)", Float) = 1.0
 	}
 
 	SubShader{
+
+		Cull Off
+		ZWrite Off
+		ZTest Always
 
 		Tags { "RenderType"="Opaque" }
 		LOD 100
@@ -24,6 +29,7 @@
 			sampler2D _CameraDepthTexture;
 
 			float _Linear;
+			float _Power;
 
 			struct appdata{
 				float4 vertex : POSITION;
@@ -57,6 +63,9 @@
 				fixed4 col;
 				col.rgb = lerp(rawDepth, linearDepth, _Linear);
 				col.a = 1.0;
+
+				col = pow(col, _Power);
+
 				return col;
 			}
 			ENDCG
