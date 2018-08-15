@@ -6,7 +6,7 @@
 		_SpecColor ("Specular Color", Color) = (1,1,1,1)
 		_SpecTex ("Specular Texture", 2D) = "white" {}
 		_Hardness ("Specular Hardness", Range(0,1)) = 0.5
-		_NormTex ("Normal Map", 2D) = "bump" {}
+		[Normal] _NormTex ("Normal Map", 2D) = "bump" {}
 	}
 
 	SubShader {

@@ -10,10 +10,10 @@
 		_SteepOrHeight ("Display Steepness/Height", Range(0,1)) = 1.0
 		
 		_SteepColor ("Steepness Color", Color) = (1,1,1,1)
-		_SteepTex ("Steepness Gradient Texture", 2D) = "white" {}
+		[NoScaleOffset] _SteepTex ("Steepness Gradient Texture", 2D) = "white" {}
 
 		_HeightColor ("Height Color", Color) = (1,1,1,1)
-		_HeightTex ("Height Gradient Texture", 2D) = "white" {}
+		[NoScaleOffset] _HeightTex ("Height Gradient Texture", 2D) = "white" {}
 		_HeightZero ("Height Neutral Level", Float) = 0.0
 		_HeightScale ("Height Scale", Float) = 100.0
 	}

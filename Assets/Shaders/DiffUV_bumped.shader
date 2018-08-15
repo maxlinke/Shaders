@@ -3,7 +3,7 @@
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-		_NormTex ("Normal Map", 2D) = "bump" {}
+		[Normal] _NormTex ("Normal Map", 2D) = "bump" {}
 	}
 
 	SubShader {

@@ -2,7 +2,7 @@
 
 	Properties{
 		[HideInInspector] _MainTex ("Texture", 2D) = "white" {}
-		_Gradient ("Gradient", 2D) = "white" {}
+		[NoScaleOffset] _Gradient ("Gradient", 2D) = "white" {}
 	}
 
 	SubShader{
