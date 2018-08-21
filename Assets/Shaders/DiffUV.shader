@@ -10,13 +10,11 @@
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf CustomLambert
+		#pragma surface surf CustomLambert //fullforwardshadows
 		#include "CustomLighting.cginc"
 
 		sampler2D _MainTex;
 		fixed4 _Color;
-
-
 
 		struct Input {
 			float2 uv_MainTex;

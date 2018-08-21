@@ -13,7 +13,7 @@
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf CustomBlinnPhong
+		#pragma surface surf CustomBlinnPhong //fullforwardshadows
 		#include "CustomLighting.cginc"
 
 		sampler2D _MainTex;
