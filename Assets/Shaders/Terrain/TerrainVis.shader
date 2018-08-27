@@ -68,9 +68,9 @@
 
 			fixed linFrac = frac(IN.linePos);
 			fixed linVal = saturate(1.0 - (2.0 * linFrac)) + saturate(-1.0 + (2.0 * linFrac));
-			linVal = smoothstep(_LineThreshA, _LineThreshB, frac(linVal));
+			linVal = smoothstep(_LineThreshA, _LineThreshB, linVal);
 
-			fixed4 c = lerp(tex, _LineColor, linVal);
+			fixed4 c = lerp(tex, _LineColor, linVal * _LineColor.a);
 			o.Albedo = c.rgb;
 			o.Alpha = 1.0;
 		}
