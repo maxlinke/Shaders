@@ -12,13 +12,11 @@
 
 		Cull Off
 
-		//TODO proper z-write i guess. how i do that i dont know. i hope that fixes the shadows...
-
 		Tags { "RenderType"="Opaque" }
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf Lambert vertex:vert
+		#pragma surface surf Lambert vertex:vert addshadow
 		#pragma target 3.0
 
 		half4 _Offset;
