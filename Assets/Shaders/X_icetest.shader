@@ -7,7 +7,13 @@
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-		_TexDepth ("Fake Depth", Range(-1,1)) = 0
+		_HeightTex ("Heightmap", 2D) = "grey" {}
+		_HeightTexScale ("Heightmap Scale", Range(0,1)) = 0.2
+		_HeightOffset ("Height Offset", Range(-1,1)) = 0
+		_DistortionLevel ("Distortion Level (Surface or Inside)", Range(0,1)) = 0
+
+		_SpecColor ("Specular Color", Color) = (1,1,1,1)
+		_Hardness ("Specular Hardness", Range(0,1)) = 0.5
 	}
 
 	SubShader {
@@ -15,14 +21,22 @@
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf Lambert vertex:vert
+		#pragma surface surf CustomBlinnPhong vertex:vert
+		#include "CustomLighting.cginc"
 
-		sampler2D _MainTex;
+
 		fixed4 _Color;
-		float _TexDepth;
+		sampler2D _MainTex;
+		sampler2D _HeightTex;
+		float _HeightTexScale;
+		float _HeightOffset;
+		float _DistortionLevel;
+
+		float _Hardness;
 
 		struct Input {
 			float2 uv_MainTex;
+			float2 uv_HeightTex;
 			float3 tanViewDir;
 		};
 
@@ -36,12 +50,21 @@
 			o.tanViewDir = mul(obj2tan, ObjSpaceViewDir(v.vertex));
 		}
 
-		void surf (Input IN, inout SurfaceOutput o) {
+		void surf (Input IN, inout CustomSurfaceOutput o) {
 			IN.tanViewDir = normalize(IN.tanViewDir);
-			float2 parallaxUV = IN.uv_MainTex + (IN.tanViewDir.xy * _TexDepth);
+			float2 heightTexCoord = IN.uv_HeightTex;
+			heightTexCoord += _DistortionLevel * IN.tanViewDir * _HeightOffset;
+			fixed heightTex = tex2D(_HeightTex, heightTexCoord).g;
+			float height = _HeightOffset + ((heightTex * 2.0 - 1.0) * _HeightTexScale);
+			float2 parallaxUV = IN.uv_MainTex + (IN.tanViewDir.xy * height);
+
 			fixed4 c = tex2D (_MainTex, parallaxUV) * _Color;
+			fixed4 s = _SpecColor;
+
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
+			o.SpecCol = s.rgb;
+			o.Hardness = _Hardness;
 		}
 		ENDCG
 	}
