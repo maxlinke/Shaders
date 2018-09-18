@@ -1,4 +1,4 @@
-﻿Shader "Custom/X_VFaceUser" {
+﻿Shader "Custom/Experimental/X_VFaceUser" {
 
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)

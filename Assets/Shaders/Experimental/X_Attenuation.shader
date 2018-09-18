@@ -1,4 +1,4 @@
-﻿Shader "Custom/X_Attenuation"
+﻿Shader "Custom/Experimental/X_Attenuation"
 {
 	Properties
 	{

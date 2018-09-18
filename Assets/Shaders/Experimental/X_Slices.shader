@@ -1,4 +1,4 @@
-﻿Shader "Custom/X_Slices"{
+﻿Shader "Custom/Experimental/X_Slices"{
 
 	Properties{
 		_Offset ("Offset Vector", Vector) = (0,0,0,0)

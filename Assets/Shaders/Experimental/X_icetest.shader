@@ -1,4 +1,4 @@
-﻿Shader "Custom/X_icetest"{
+﻿Shader "Custom/Experimental/X_icetest"{
 
 	//(start of an) attempt at recreating the ice-shader from deep rock galactic
 	//works well on planes and cubes with fakedepth at -1
@@ -22,7 +22,7 @@
 		
 		CGPROGRAM
 		#pragma surface surf CustomBlinnPhong vertex:vert
-		#include "CustomLighting.cginc"
+		#include "../CustomLighting.cginc"	//TODO uh... is the "../" because of where the .shader file is or where i "declare" the shader to be (line 1)
 
 
 		fixed4 _Color;
