@@ -26,8 +26,7 @@ public class PLYImporter : MonoBehaviour {
 	}
 
 	public void LoadModel () {
-		mf.sharedMesh = GetMeshFromFile(filePath);
-		mf.transform.localScale = new Vector3(1, 1, (blenderFix ? -1 : 1));
+		mf.sharedMesh = GetMeshFromFile(filePath, blenderFix);
 	}
 
 //	string FileToString (string filePath) {
@@ -40,7 +39,7 @@ public class PLYImporter : MonoBehaviour {
 //		return stringified;
 //	}
 
-	public static Mesh GetMeshFromFile (string filePath) {
+	public static Mesh GetMeshFromFile (string filePath, bool blenderFix = false) {
 		Vector3[] vertices, normals;
 		Color32[] colors32;
 		Vector2[] uv;
@@ -50,15 +49,11 @@ public class PLYImporter : MonoBehaviour {
 		ReadHeader(inputStream, out vertices, out normals, out colors32, out uv, out triangles, out propertyIndices);
 		ReadData(inputStream, ref vertices, ref normals, ref colors32, ref uv, ref triangles, propertyIndices);
 		inputStream.Close();
+		Mesh output = CreateMesh(vertices, normals, colors32, uv, triangles, blenderFix);
 		string[] splitPath = filePath.Split('/');
 		string fileName = splitPath[splitPath.Length - 1].Split('.')[0];
-		Mesh output = new Mesh();
 		output.name = fileName;
-		output.vertices = vertices;
-		output.normals = normals;
-		output.colors32 = colors32;
-		output.uv = uv;
-		output.triangles = triangles;
+
 		return output;
 	}
 
@@ -123,6 +118,28 @@ public class PLYImporter : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	static Mesh CreateMesh (Vector3[] vertices, Vector3[] normals, Color32[] colors32, Vector2[] uv, int[] triangles, bool flipZ = false) {
+		Mesh output = new Mesh();
+		if(flipZ){
+			Vector3 scale = new Vector3(1, 1, -1);
+			for(int i=0; i<vertices.Length; i++){
+				vertices[i] = Vector3.Scale(vertices[i], scale);
+				normals[i] = Vector3.Scale(normals[i], scale);
+			}
+			for(int i=0; i<triangles.Length; i+=3){
+				int temp = triangles[i+1];
+				triangles[i+1] = triangles[i+2];
+				triangles[i+2] = temp;
+			}
+		}
+		output.vertices = vertices;
+		output.normals = normals;
+		output.colors32 = colors32;
+		output.uv = uv;
+		output.triangles = triangles;
+		return output;
 	}
 
 	static VertexData ReadVertexDataFromLine (string line, Dictionary<string, int> propertyIndices) {
