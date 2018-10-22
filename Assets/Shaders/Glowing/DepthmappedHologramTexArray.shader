@@ -13,7 +13,7 @@
 
 	SubShader{
 
-		Tags { "RenderType"="Opaque" "Queue" = "Transparent" }
+		Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
 		LOD 100
 
 		Blend One One
