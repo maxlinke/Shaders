@@ -44,8 +44,8 @@
         half4 LightingCustomIBL (IBLSurfaceOutput s, half3 viewDir, UnityGI gi) {
             s.Normal = normalize(s.Normal);
 
-	        half3 specularTint = half3(1,0,1);
-	        half oneMinusReflectivity = 1.0 - s.Metallic;
+			half3 specularTint;
+	        half oneMinusReflectivity;
 	        s.Albedo = DiffuseAndSpecularFromMetallic(s.Albedo, s.Metallic, specularTint, oneMinusReflectivity);
 
 	        half4 c;
