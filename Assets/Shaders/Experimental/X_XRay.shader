@@ -4,11 +4,18 @@
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
 		_XRayColor ("X-Ray Color", Color) = (1,0.6,0.2,1)
+		_StencilID ("Stencil ID", int) = 0
 	}
 
 	SubShader {
 
-		Tags { "Queue"="AlphaTest+1" }
+		Tags { "RenderType"="Opaque" "Queue"="Geometry" }
+
+		Stencil {
+			Ref [_StencilID]
+			Comp Always
+			Pass Replace
+		}
 
 		CGPROGRAM
 
@@ -31,25 +38,13 @@
 
 		Pass {
 
-			ZWrite Off
-			ZTest LEqual
-			ColorMask 0
-
-			Stencil {
-				Ref 59
-				Comp Always
-				Pass Replace
-			}
-
-		}
-
-		Pass {
+			Tags { "Queue"="Transparent" }
 
 			ZWrite Off
 			ZTest Greater
 
 			Stencil {
-				Ref 59
+				Ref [_StencilID]
 				Comp NotEqual
 			}
 
