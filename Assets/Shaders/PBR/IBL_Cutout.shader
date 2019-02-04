@@ -1,8 +1,9 @@
-﻿Shader "Custom/PBR/IBL" {
+﻿Shader "Custom/PBR/IBL_Cutout" {
 
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_AlphaCutoff ("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 		[NoScaleOffset] _MetallicGlossMap ("Metallic (RGB) + Smoothness (A)", 2D) = "black" {}
         [NoScaleOffset] [Normal] _BumpMap ("Normal Map", 2D) = "bump" {}
         [NoScaleOffset] _EmissionMap ("Emission", 2D) = "black" {}
@@ -13,14 +14,14 @@
 	
 	SubShader {
 	
-		Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
+		Tags { "RenderType" = "Opaque" "Queue" = "AlphaTest" }
 		LOD 200
 
 		CGPROGRAM
 
 		#include "UnityPBSLighting.cginc"
 
-		#pragma surface surf CustomIBL
+		#pragma surface surf CustomIBL alphatest:_AlphaCutoff addshadow
 		#pragma target 3.0
 
         struct IBLSurfaceOutput {
@@ -40,7 +41,7 @@
 		samplerCUBE _EnvironmentMap;
 		half _DiffuseMipLevel;
         half _IndirectIntensity;
-        
+
         half4 LightingCustomIBL (IBLSurfaceOutput s, half3 viewDir, UnityGI gi) {
             s.Normal = normalize(s.Normal);
 

@@ -1,4 +1,4 @@
-﻿Shader "Custom/PBR/IBL" {
+﻿Shader "Custom/PBR/IBL_Transparent" {
 
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
@@ -13,14 +13,14 @@
 	
 	SubShader {
 	
-		Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
+		Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
 		LOD 200
 
 		CGPROGRAM
 
 		#include "UnityPBSLighting.cginc"
 
-		#pragma surface surf CustomIBL
+		#pragma surface surf CustomIBL alpha:fade addshadow
 		#pragma target 3.0
 
         struct IBLSurfaceOutput {
