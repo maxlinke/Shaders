@@ -16,7 +16,7 @@ half3 LambertDiffuse (UnityLight light, half3 normal) {
 
 half3 BlinnPhongSpecular (UnityLight light, half3 viewDir, half3 normal, half hardness) {
     half3 halfVec = normalize(light.dir + viewDir);
-    half spec = pow(saturate(dot(normal, halfVec)), hardness * 128.0) * light.color;
+    half3 spec = pow(saturate(dot(normal, halfVec)), hardness * 128.0) * light.color;
     return spec;
 }
 

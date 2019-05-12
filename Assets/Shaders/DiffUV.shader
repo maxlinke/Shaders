@@ -6,6 +6,7 @@
 	}
 
 	SubShader {
+
 		Tags { "RenderType"="Opaque" }
 		LOD 200
 		
@@ -25,7 +26,9 @@
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
 		}
+
 		ENDCG
 	}
+    
 	FallBack "Diffuse"
 }
