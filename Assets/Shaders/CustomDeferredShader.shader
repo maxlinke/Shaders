@@ -62,7 +62,6 @@ half4 CalculateLight (unity_v2f_deferred i)
     float3 eyeVec = normalize(wpos-_WorldSpaceCameraPos);
 
     half3 diff = data.diffuseColor * LambertDiffuse(light, data.normalWorld);
-    // return half4(diff, 1);
     half3 spec = data.specularColor * BlinnPhongSpecular(light, -eyeVec, data.normalWorld, (1 - data.smoothness));
     return half4(diff + spec, 1);
 }
