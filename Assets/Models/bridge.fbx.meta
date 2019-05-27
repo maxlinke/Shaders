@@ -1,0 +1,184 @@
+fileFormatVersion: 2
+guid: 477e6466417997249918ff733ff9edb9
+timeCreated: 1558008268
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: BezierCurve
+    100002: //RootNode
+    100004: bridge
+    100006: bridge.001
+    100008: bridge.002
+    100010: bridge.003
+    100012: bridge.004
+    100014: bridge.005
+    100016: bridge_arch
+    100018: bridge_flag
+    100020: bridge_pillar_1
+    100022: bridge_pillar_1.001
+    100024: bridge_stairs
+    100026: bridge_stairs_collider
+    100028: bridge_stairs_flat
+    100030: bridge_stairs_sloped
+    100032: bridge_thin
+    100034: Cube.001
+    100036: Cube.003
+    100038: pardam_fence
+    100040: pillar_statue
+    100042: Text
+    400000: BezierCurve
+    400002: //RootNode
+    400004: bridge
+    400006: bridge.001
+    400008: bridge.002
+    400010: bridge.003
+    400012: bridge.004
+    400014: bridge.005
+    400016: bridge_arch
+    400018: bridge_flag
+    400020: bridge_pillar_1
+    400022: bridge_pillar_1.001
+    400024: bridge_stairs
+    400026: bridge_stairs_collider
+    400028: bridge_stairs_flat
+    400030: bridge_stairs_sloped
+    400032: bridge_thin
+    400034: Cube.001
+    400036: Cube.003
+    400038: pardam_fence
+    400040: pillar_statue
+    400042: Text
+    2300000: BezierCurve
+    2300002: bridge
+    2300004: bridge.001
+    2300006: bridge.002
+    2300008: bridge.003
+    2300010: bridge.004
+    2300012: bridge.005
+    2300014: bridge_arch
+    2300016: bridge_flag
+    2300018: bridge_pillar_1
+    2300020: bridge_pillar_1.001
+    2300022: bridge_stairs
+    2300024: bridge_stairs_collider
+    2300026: bridge_stairs_flat
+    2300028: bridge_stairs_sloped
+    2300030: bridge_thin
+    2300032: Cube.001
+    2300034: Cube.003
+    2300036: pardam_fence
+    2300038: pillar_statue
+    2300040: Text
+    3300000: BezierCurve
+    3300002: bridge
+    3300004: bridge.001
+    3300006: bridge.002
+    3300008: bridge.003
+    3300010: bridge.004
+    3300012: bridge.005
+    3300014: bridge_arch
+    3300016: bridge_flag
+    3300018: bridge_pillar_1
+    3300020: bridge_pillar_1.001
+    3300022: bridge_stairs
+    3300024: bridge_stairs_collider
+    3300026: bridge_stairs_flat
+    3300028: bridge_stairs_sloped
+    3300030: bridge_thin
+    3300032: Cube.001
+    3300034: Cube.003
+    3300036: pardam_fence
+    3300038: pillar_statue
+    3300040: Text
+    4300000: pillar_statue
+    4300002: bridge.005
+    4300004: bridge.004
+    4300006: bridge_thin
+    4300008: bridge_pillar_1.001
+    4300010: bridge_pillar_1
+    4300012: pardam_fence
+    4300014: bridge_stairs_sloped
+    4300016: bridge_stairs_flat
+    4300018: bridge_stairs_collider
+    4300020: bridge_arch
+    4300022: Cube.003
+    4300024: Text
+    4300026: bridge.003
+    4300028: bridge_flag
+    4300030: bridge.002
+    4300032: BezierCurve
+    4300034: Cube.001
+    4300036: bridge.001
+    4300038: bridge_stairs
+    4300040: bridge
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
