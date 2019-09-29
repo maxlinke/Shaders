@@ -28,7 +28,7 @@ half4 LightingCustomIBL (IBLSurfaceOutput s, half3 viewDir, UnityGI gi) {
         viewDir,
         gi.light,
         gi.indirect
-    ) + s.Emission;
+    ) + s.Emission;     //erm... i think emission gets applied somewhere else without me explicitly doing so... CHECK!
     c.a = s.Alpha;
     return c;
 }
