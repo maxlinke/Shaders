@@ -7,7 +7,9 @@
 	SubShader {
 
 		Tags { "RenderType"="Opaque" "Queue" = "Background" }
-		LOD 100
+		
+        ZTest LEqual        //if this is on "always" (which would make sense) the holdout effect thing wouldn't work
+        ZWrite On
 
 		Pass {
 
