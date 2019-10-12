@@ -3,7 +3,8 @@
 	Properties{
 		[HideInInspector] _MainTex ("Texture", 2D) = "white" {}
 		_BlendAmount ("Blend Amount", Range(0, 1)) = 0.5
-        _FlowTex ("(Periodic) Flow Map", 2D) = "grey" {}
+        [NoScaleOffset] _FlowTex ("(Periodic) Flow Map", 2D) = "grey" {}
+        _FlowTexCustomST ("Flow Tex ST", Vector) = (1,1,0,0)
         _FlowSpeed ("(Periodic) Flow Speed", float) = 1
         _FlowStrength ("(Periodic) Flow Strength", Range(0, 1)) = 0.01
         _FixedFlow ("Fixed Flow", Vector) = (0, 1, 0, 0)
@@ -29,7 +30,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			sampler2D _FlowTex;
-            float4 _FlowTex_ST;
+            float4 _FlowTexCustomST;
             float _FlowSpeed;
             float _FlowStrength;
             float4 _FixedFlow;
@@ -54,7 +55,7 @@
 				v2f o;
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                o.flowUV = TRANSFORM_TEX(v.uv, _FlowTex);
+                o.flowUV = v.uv * _FlowTexCustomST.xy + _FlowTexCustomST.zw;
 				return o;
 			}
 			
