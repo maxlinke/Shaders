@@ -3,6 +3,8 @@
 	Properties {
         _A ("Normal Blend Bound A", Range(0, 1)) = 0
         _B ("Normal Blend Bound B", Range(0, 1)) = 1
+        [Enum(UnityEngine.Rendering.BlendMode)] _BlendOpA ("Blend Operation A", Float) = 1
+        [Enum(UnityEngine.Rendering.BlendMode)] _BlendOpB ("Blend Operation B", Float) = 1
     }
 
 	SubShader {
@@ -13,7 +15,7 @@
         ZTest LEqual
         ZWrite Off
         Cull Back
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend [_BlendOpA] [_BlendOpB]
 
 		Pass {
 
