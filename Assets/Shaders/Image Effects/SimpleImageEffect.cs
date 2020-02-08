@@ -9,7 +9,11 @@ public class SimpleImageEffect : MonoBehaviour {
 	[SerializeField] Material effectMaterial;
 
 	void OnRenderImage(RenderTexture src, RenderTexture dst){
-		Graphics.Blit(src, (directlyToScreen ? null : dst), effectMaterial);
+        if(effectMaterial == null){
+            Graphics.Blit(src, dst);
+        }else{
+		    Graphics.Blit(src, (directlyToScreen ? null : dst), effectMaterial);
+        }
 	}
 
 }
