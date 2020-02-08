@@ -3,6 +3,7 @@
 	Properties {
         _PositionScale ("Pos Scale", Float) = 1.0
         _TimeScale ("Time Scale", Float) = 1.0
+        _DebugW ("Debug W", Float) = 0.0
 	}
 	
 	SubShader {
@@ -29,6 +30,7 @@
 
             float _PositionScale;
             float _TimeScale;
+            float _DebugW;
 			
 			v2f vert (appdata v) {
 				v2f o;
@@ -39,8 +41,10 @@
 			
 			fixed4 frag (v2f i) : SV_Target {
 				fixed4 col = fixed4(1,1,1,1);
-                // col.rgb *= n41p(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale));
-                col.rgb *= n41(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale));
+                // col.rgb *= n41(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale));
+                // col.rgb *= perlin3(i.worldPos * _PositionScale);
+                // col.rgb *= perlin4(float4(i.worldPos * _PositionScale, _DebugW));
+                col.rgb *= perlin4(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale));
 				return col;
 			}
 			

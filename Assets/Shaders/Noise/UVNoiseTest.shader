@@ -32,13 +32,15 @@
 			v2f vert (appdata v) {
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv * _NoiseScale;
+				o.uv = v.uv * _NoiseScale - _NoiseScale / 2.0;
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target {
 				fixed4 col = fixed4(1,1,1,1);
-                col.rgb *= n21(i.uv);
+                col.rgb = n21(i.uv);
+                // col.rgb = perlin2(i.uv);
+                // col.rgb = perlin1(i.uv.x);
 				return col;
 			}
 			
