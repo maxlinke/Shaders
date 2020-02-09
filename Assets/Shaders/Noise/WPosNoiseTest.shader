@@ -4,6 +4,7 @@
         _PositionScale ("Pos Scale", Float) = 1.0
         _TimeScale ("Time Scale", Float) = 1.0
         _DebugW ("Debug W", Float) = 0.0
+        _Iterations ("Iterations", Int) = 1
 	}
 	
 	SubShader {
@@ -31,6 +32,7 @@
             float _PositionScale;
             float _TimeScale;
             float _DebugW;
+            uint _Iterations;
 			
 			v2f vert (appdata v) {
 				v2f o;
@@ -44,7 +46,9 @@
                 // col.rgb *= n41(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale));
                 // col.rgb *= perlin3(i.worldPos * _PositionScale);
                 // col.rgb *= perlin4(float4(i.worldPos * _PositionScale, _DebugW));
-                col.rgb *= perlin4(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale));
+                // col.rgb *= perlin4(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale));
+                // col.rgb *= clouds3(i.worldPos * _PositionScale, _Iterations);
+                col.rgb *= clouds4(float4(i.worldPos * _PositionScale, _Time.y * _TimeScale), _Iterations);
 				return col;
 			}
 			

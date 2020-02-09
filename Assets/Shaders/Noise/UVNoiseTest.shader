@@ -38,9 +38,11 @@
 			
 			fixed4 frag (v2f i) : SV_Target {
 				fixed4 col = fixed4(1,1,1,1);
-                col.rgb = n21(i.uv);
+                // col.rgb = n21(i.uv);
                 // col.rgb = perlin2(i.uv);
                 // col.rgb = perlin1(i.uv.x);
+                col.rgb = clouds2(i.uv, 4);
+                // col.rgb = clouds1(i.uv.x, 4);
 				return col;
 			}
 			

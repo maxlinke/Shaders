@@ -151,3 +151,65 @@ float perlin4 (float4 input) {
     };
     return lerp(lerpC[0], lerpC[1], fracInput.x);
 }
+
+// clouds noise
+
+float clouds1 (float input, uint iterations) {
+    float output = 0.0;
+    float pos = input;
+    float maxSum = 0.0;
+    for(uint i=0; i<iterations; i++){
+        float multiplier = 1.0 / (i + 1);
+        float noise = 0.5 - perlin1(pos);
+        output += multiplier * noise;
+        maxSum += multiplier;
+        pos *= 2.0;
+    }
+    output += maxSum / 2.0;
+    return output / maxSum;
+}
+
+float clouds2 (float2 input, uint iterations) {
+    float output = 0.0;
+    float2 pos = input;
+    float maxSum = 0.0;
+    for(uint i=0; i<iterations; i++){
+        float multiplier = 1.0 / (i + 1);
+        float noise = 0.5 - perlin2(pos);
+        output += multiplier * noise;
+        maxSum += multiplier;
+        pos *= 2.0;
+    }
+    output += maxSum / 2.0;
+    return output / maxSum;
+}
+
+float clouds3 (float3 input, uint iterations) {
+    float output = 0.0;
+    float3 pos = input;
+    float maxSum = 0.0;
+    for(uint i=0; i<iterations; i++){
+        float multiplier = 1.0 / (i + 1);
+        float noise = 0.5 - perlin3(pos);
+        output += multiplier * noise;
+        maxSum += multiplier;
+        pos *= 2.0;
+    }
+    output += maxSum / 2.0;
+    return output / maxSum;
+}
+
+float clouds4 (float4 input, uint iterations) {
+    float output = 0.0;
+    float4 pos = input;
+    float maxSum = 0.0;
+    for(uint i=0; i<iterations; i++){
+        float multiplier = 1.0 / (i + 1);
+        float noise = 0.5 - perlin4(pos);
+        output += multiplier * noise;
+        maxSum += multiplier;
+        pos *= 2.0;
+    }
+    output += maxSum / 2.0;
+    return output / maxSum;
+}
