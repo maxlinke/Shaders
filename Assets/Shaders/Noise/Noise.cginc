@@ -39,10 +39,16 @@ float n22 (float2 input) {
 }
 
 float n21 (float2 input) {
-    return frac(
-        127.189 * n11_a(input.x) * n11_b(input.y) 
-        + 824.193 * n11_c(input.x + input.y)
-    );
+    // return frac(
+    //     127.189 * n11_a(input.x) * n11_b(input.y) 
+    //     + 824.193 * n11_c(input.x + input.y)
+    // );
+    float a =  n11_a(input.x);
+    float b =  n11_b(input.y);
+    return frac(127.189 * frac(
+        n11_a(a * b) + 
+        n11_b(b * a)
+    ));
 }
 
 float n33 (float3 input) {
@@ -50,10 +56,18 @@ float n33 (float3 input) {
 }
 
 float n31 (float3 input)  {
-    return frac(
-        1270.189 * n11_a(input.x) * n11_b(input.y) * n11_c(input.z) 
-        + 824.193 * n11_c(input.x + input.y + input.z)
-    );
+    // return frac(
+    //     1270.189 * n11_a(input.x) * n11_b(input.y) * n11_c(input.z) 
+    //     + 824.193 * n11_c(input.x + input.y + input.z)
+    // );
+    float a =  n11_a(input.x);
+    float b =  n11_b(input.y);
+    float c =  n11_c(input.z);
+    return frac(1270.189 * frac(
+        n11_a(a * b) + 
+        n11_b(b * c) + 
+        n11_c(c * a)
+    ));
 }
 
 float n44 (float4 input) {
@@ -61,9 +75,19 @@ float n44 (float4 input) {
 }
 
 float n41 (float4 input) {
-    return frac(
-        12700.189 * n11_a(input.x) * n11_b(input.y) * n11_c(input.z) * n11_d(input.w)
-        + 824.193 * n11_a(input.x + input.y + input.z + input.w)
+    // return frac(
+    //     12700.189 * n11_a(input.x) * n11_b(input.y) * n11_c(input.z) * n11_d(input.w)
+    //     + 824.193 * n11_a(input.x + input.y + input.z + input.w)
+    // );
+    float a =  n11_a(input.x);
+    float b =  n11_b(input.y);
+    float c =  n11_c(input.z);
+    float d =  n11_d(input.w);
+    return frac(12700.189 * frac(
+        n11_a(a * b) + 
+        n11_b(b * c) + 
+        n11_c(c * d) + 
+        n11_d(d * a))
     );
 }
 
