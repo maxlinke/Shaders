@@ -1,4 +1,4 @@
-﻿Shader "Custom/Noise/Lightning" {
+﻿Shader "Custom/Noise/SimpleElectricArc" {
 
     // meshrenderer needs its bounds set via script... 
 
