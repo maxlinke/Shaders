@@ -1,4 +1,4 @@
-﻿Shader "Custom/Noise/SimpleElectricArc" {
+﻿Shader "Custom/Noise/ArcLinear" {
 
     // meshrenderer needs its bounds set via script... 
 
@@ -55,6 +55,7 @@
 
 			struct v2f {
 				float4 vertex : SV_POSITION;
+                float3 worldPos : TEXCOORD0;
 				UNITY_FOG_COORDS(1)
 			};
 			
@@ -79,8 +80,11 @@
                 float3 noiseB = float3(0, 0.5 - n11_b(pos + iteration + 1), 0.5 - n11_c(pos + iteration + 1));
                 float3 noiseOffset = lerp(noiseA, noiseB, t) * 2 * _NoiseStrength * smoothstep(0, 0.2, arc);
 
+                float3 modVertex = v.vertex + fixedDirOffset + coilOffset + noiseOffset;
+
 				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex + fixedDirOffset + coilOffset + noiseOffset);
+				o.vertex = UnityObjectToClipPos(modVertex);
+                o.worldPos = mul(unity_ObjectToWorld, modVertex).xyz;
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
@@ -88,7 +92,7 @@
 			fixed4 frag (v2f i) : SV_Target {
 				fixed4 c = _Color;
 
-				#if FOG_ON
+				#if FOG_ON      // this doesn't seem to work... 
 					UNITY_CALC_FOG_FACTOR_RAW(length(_WorldSpaceCameraPos - i.worldPos.xyz));
 					c.rgb = lerp(fixed3(0,0,0), c.rgb, saturate(unityFogFactor));
 				#endif
