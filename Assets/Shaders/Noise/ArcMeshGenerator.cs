@@ -14,6 +14,12 @@ public class ArcMeshGenerator : MonoBehaviour {
 
     enum Axis { X, Y, Z }
 
+    [SerializeField] Vector2 atan2Input;
+    [ContextMenu("ATAN2")]
+    public void Atan2Test () {
+        Debug.Log(Mathf.Atan2(atan2Input.x, atan2Input.y).ToString());
+    }
+
     [ContextMenu("Regenerate Mesh")]
     public void RegenerateMesh () {
         var mf = GetComponent<MeshFilter>();
@@ -52,6 +58,7 @@ public class ArcMeshGenerator : MonoBehaviour {
         // first two vertices are end cap centers, then following are the segment rings
         Vector3[] vertices = new Vector3[((segmentCount + 1) * ringVertexCount) + 2];
         Vector3[] normals = new Vector3[vertices.Length];
+        Vector2[] uvs = new Vector2[vertices.Length];
         Vector3 dir = (axis == Axis.X ? Vector3.right : axis == Axis.Y ? Vector3.up : Vector3.forward);
         Vector3 start, end;
         if(!symmetric){
@@ -102,9 +109,31 @@ public class ArcMeshGenerator : MonoBehaviour {
                 triangles[v++] = d;
             }
         }
+        // set uvs
+        for(int i=0; i<uvs.Length; i++){
+            float a, b;
+            switch(axis){
+                case Axis.X:
+                    a = vertices[i].x;
+                    b = Mathf.Atan2(normals[i].y, normals[i].z);
+                    break;
+                case Axis.Y:
+                    a = vertices[i].y;
+                    b = Mathf.Atan2(normals[i].z, normals[i].x);
+                    break;
+                case Axis.Z:
+                    a = vertices[i].z;
+                    b = Mathf.Atan2(normals[i].x, normals[i].y);
+                    break;
+                default:
+                    throw new System.Exception("Invalid Axis \"" + axis.ToString() + "\"!");
+            }
+            uvs[i] = new Vector2((a + (symmetric ? (length / 2f) : 0f)) / length, Mathf.Repeat(b / (2f * Mathf.PI), 1f));
+        }
         var output = new Mesh();
         output.vertices = vertices;
         output.normals = normals;
+        output.uv = uvs;
         output.triangles = triangles;
         output.bounds = new Bounds((start + end) / 2f, Vector3.one * length);
         return output;
