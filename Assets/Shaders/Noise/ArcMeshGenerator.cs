@@ -10,6 +10,7 @@ public class ArcMeshGenerator : MonoBehaviour {
     [SerializeField] Axis axis;
     [SerializeField] float length;
     [SerializeField] bool endCapCentersHaveNormals;
+    [SerializeField] bool symmetric;
 
     enum Axis { X, Y, Z }
 
@@ -39,7 +40,7 @@ public class ArcMeshGenerator : MonoBehaviour {
                     ringNormals[i] = new Vector3(0, a, b);
                     break;
                 case Axis.Y:
-                    ringNormals[i] = new Vector3(a, 0, b);
+                    ringNormals[i] = new Vector3(b, 0, a);
                     break;
                 case Axis.Z:
                     ringNormals[i] = new Vector3(a, b, 0);
@@ -48,10 +49,18 @@ public class ArcMeshGenerator : MonoBehaviour {
                     throw new System.Exception("Invalid Axis \"" + axis.ToString() + "\"!");
             }
         }
+        // first two vertices are end cap centers, then following are the segment rings
         Vector3[] vertices = new Vector3[((segmentCount + 1) * ringVertexCount) + 2];
         Vector3[] normals = new Vector3[vertices.Length];
-        Vector3 start = Vector3.zero;
-        Vector3 end = length * (axis == Axis.X ? Vector3.right : axis == Axis.Y ? Vector3.up : Vector3.forward);
+        Vector3 dir = (axis == Axis.X ? Vector3.right : axis == Axis.Y ? Vector3.up : Vector3.forward);
+        Vector3 start, end;
+        if(!symmetric){
+            start = Vector3.zero;
+            end = length * dir;
+        }else{
+            end = (length / 2) * dir;
+            start = -end;
+        }
         vertices[0] = start;
         normals[0] = (start - end).normalized * (endCapCentersHaveNormals ? 1f : 0f);
         vertices[1] = end;
@@ -65,8 +74,7 @@ public class ArcMeshGenerator : MonoBehaviour {
                 v++;
             }
         }
-        // int[] triangles = new int[3 * ((2 * ringVertexCount * segmentCount) + (2 * ringVertexCount))];
-        int[] triangles = new int[3 * 2 * ringVertexCount];
+        int[] triangles = new int[3 * ((2 * ringVertexCount * segmentCount) + (2 * ringVertexCount))];
         // generate end caps
         for(int i=0; i<ringVertexCount; i++){
             int fc = 3 * i;                     // front cap
@@ -78,7 +86,22 @@ public class ArcMeshGenerator : MonoBehaviour {
             triangles[bc+1] = vertices.Length - 1 - i;
             triangles[bc+2] = vertices.Length - 1 - ((i + 1) % ringVertexCount);
         }
-        
+        // generate the segments
+        v = 2 * 3 * ringVertexCount;
+        for(int i=0; i<segmentCount; i++){
+            for(int j=0; j<ringVertexCount; j++){
+                int a = 2 + (i * ringVertexCount) + j;
+                int b = 2 + ((i+1) * ringVertexCount) + j;
+                int c = 2 + ((i+1) * ringVertexCount) + ((j+1) % ringVertexCount);
+                int d = 2 + (i * ringVertexCount) + ((j+1) % ringVertexCount);
+                triangles[v++] = a;
+                triangles[v++] = b;
+                triangles[v++] = c;
+                triangles[v++] = a;
+                triangles[v++] = c;
+                triangles[v++] = d;
+            }
+        }
         var output = new Mesh();
         output.vertices = vertices;
         output.normals = normals;
