@@ -11,13 +11,20 @@ public class ArcMeshGenerator : MonoBehaviour {
     [SerializeField] float length;
     [SerializeField] bool endCapCentersHaveNormals;
     [SerializeField] bool symmetric;
-    [SerializeField] bool generateMultiple;
-    [SerializeField] bool generateBunches;
-    [SerializeField] ArcMeshSettings[] settings;
+    [SerializeField] bool onlyGenerateDefault;
+    [SerializeField] ArcMeshSettingsCollection[] groupedSettings;
 
+    [System.Serializable] 
+    struct ArcMeshSettingsCollection {
+        [Tooltip("Just for humans. Doesn't actually do anything...")] public string name;       // HOLY FUCK THIS ACTUALLY NAMES THE ARRAY ELEMENT IN THE INSPECTOR!!!
+        public bool excludeInMeshGeneration;
+        [Range(1, 10)] public int occurences;
+        public ArcMeshSettings[] settings;
+    }
 
     [System.Serializable]
     struct ArcMeshSettings {
+        [Tooltip("Just for humans. Doesn't actually do anything...")] public string name;
         [Range(1, 100)] public int segments;
         [Range(0, 1)] public float thickness;
         [Range(0, 5)] public float frequency;
@@ -40,6 +47,21 @@ public class ArcMeshGenerator : MonoBehaviour {
 
     enum Axis { X, Y, Z }
 
+    void OnValidate () {
+        for(int i=0; i<groupedSettings.Length; i++){
+            if(groupedSettings[i].occurences < 1){
+                groupedSettings[i].occurences = 1;
+            }
+            if(groupedSettings[i].settings == null){
+                groupedSettings[i].settings = new ArcMeshSettings[0];
+            }
+            if(groupedSettings[i].settings.Length < 1){
+                groupedSettings[i].settings = new ArcMeshSettings[1];
+                groupedSettings[i].settings[0] = ArcMeshSettings.Default;
+            }
+        }
+    }
+
     [ContextMenu("Regenerate Mesh")]
     public void RegenerateMesh () {
         var mf = GetComponent<MeshFilter>();
@@ -49,32 +71,47 @@ public class ArcMeshGenerator : MonoBehaviour {
         }
         try{
             Mesh newMesh;
-            if(!generateMultiple){
+            if(onlyGenerateDefault || groupedSettings == null || groupedSettings.Length < 1){
                 var genSettings = ArcMeshSettings.Default;
                 genSettings.segments = singleGenSegmentCount;
                 newMesh = GenerateMesh(genSettings);
             }else{
-                CombineInstance[] partialMeshes;
-                if(!generateBunches){
-                    partialMeshes = new CombineInstance[settings.Length];
-                    for(int i=0; i<settings.Length; i++){
-                        partialMeshes[i] = new CombineInstance();
-                        partialMeshes[i].mesh = GenerateMesh(settings[i]);
+                int maxOcc = 0;
+                foreach(var group in groupedSettings){
+                    if(group.excludeInMeshGeneration){
+                        continue;
                     }
-                }else{
-                    partialMeshes = new CombineInstance[(settings.Length *  (settings.Length + 1)) / 2];
-                    int i = 0;
-                    for(int b=0; b<settings.Length; b++){
-                        for(int s=b; s<settings.Length; s++){
-                            partialMeshes[i] = new CombineInstance();
-                            partialMeshes[i].mesh = GenerateMesh(settings[s], (float)b / settings.Length);
-                            i++;
+                    if(group.occurences > maxOcc){
+                        maxOcc = group.occurences;
+                    }
+                }
+
+                List<ArcMeshSettingsCollection> groupsToUse = new List<ArcMeshSettingsCollection>();
+                for(int o=0; o<maxOcc; o++){
+                    for(int i=0; i<groupedSettings.Length; i++){
+                        if(groupedSettings[i].excludeInMeshGeneration){
+                            continue;
+                        }
+                        int gOcc = groupedSettings[i].occurences;
+                        int rOcc = maxOcc / gOcc;   // say there's max. 7 occurences and this group has 2
+                        if(o % rOcc == 0){          // then this is true for 0 and 3 for this group and true everytime for the group with the max occurences
+                            groupsToUse.Add(groupedSettings[i]);
                         }
                     }
                 }
                 
+                List<CombineInstance> partialMeshes = new List<CombineInstance>();
+                for(int i=0; i<groupsToUse.Count; i++){
+                    float tOff = (float)i / groupsToUse.Count;
+                    for(int j=0; j<groupsToUse[i].settings.Length; j++){
+                        var newCI = new CombineInstance();
+                        newCI.mesh = GenerateMesh(groupsToUse[i].settings[j], tOff);
+                        partialMeshes.Add(newCI);
+                    }
+                }
+
                 newMesh = new Mesh();
-                newMesh.CombineMeshes(partialMeshes, true, false, false);
+                newMesh.CombineMeshes(partialMeshes.ToArray(), true, false, false);
             }
             mf.sharedMesh = newMesh;
             if(mf.sharedMesh != null){

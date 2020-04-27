@@ -1,8 +1,5 @@
 ﻿Shader "Unlit/ArcInSphere" {
 
-    // requires a mesh starting at (0,0,0) and going in z direction to (0,0,1)
-
-
 	Properties {
         _Color ("Main Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _GlowColor ("Glow Color", Color) = (1.0, 1.0, 1.0, 1.0)
