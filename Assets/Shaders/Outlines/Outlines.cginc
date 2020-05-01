@@ -5,10 +5,10 @@ float4 CalculateOutlineClipPos (float4 vertex, float3 normal) {
     #if FIXED_OUTLINE_WIDTH
         float3 worldPos = mul(unity_ObjectToWorld, vertex).xyz;
         float camDist = length(_WorldSpaceCameraPos - worldPos);
-        float multiplier = camDist / _ScreenParams.y;
+        float multiplier = camDist / _ScreenParams.y;               // can skip the screenparams.y stuff if fixed shouldn't mean fixed PIXEL size but rather distance independent line width...
         return UnityObjectToClipPos(vertex + (normal / _Scale * _OutlineWidth * multiplier));
     #else
-        return UnityObjectToClipPos(vertex + (normal / _Scale * _OutlineWidth));
+        return UnityObjectToClipPos(vertex + (normal * _OutlineWidth));
     #endif
 }
 
