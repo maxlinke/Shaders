@@ -67,9 +67,16 @@ SubShader {
 
         fixed4 frag (v2f i) : SV_Target
         {
-            half4 tex = texCUBE (_Tex, i.texcoord);
-            half4 tex2 = texCUBE (_Tex2, i.texcoord);
-            half3 c = lerp(DecodeHDR (tex, _Tex_HDR), DecodeHDR (tex2, _Tex2_HDR), _LerpAmount);
+            half3 c;
+            if(_LerpAmount <= 0.0){
+                c = DecodeHDR(texCUBE(_Tex, i.texcoord), _Tex_HDR);
+            }else if(_LerpAmount >= 1.0){
+                c = DecodeHDR(texCUBE(_Tex2, i.texcoord), _Tex2_HDR);
+            }else{
+                half4 tex = texCUBE (_Tex, i.texcoord);
+                half4 tex2 = texCUBE (_Tex2, i.texcoord);
+                c = lerp(DecodeHDR (tex, _Tex_HDR), DecodeHDR (tex2, _Tex2_HDR), _LerpAmount);
+            }
             c = c * _Tint.rgb * unity_ColorSpaceDouble.rgb;
             c *= _Exposure;
             return half4(c, 1);
