@@ -1,17 +1,17 @@
-﻿Shader "Custom/Outlines/Standard (Grunge)" {
+﻿Shader "Custom/Outlines/Standard (Triplanar Albedo Overlay)" {
 
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB), Alpha (A)", 2D) = "white" {}
-        [NoScaleOffset]_GrungeTex ("Grunge (RGB)", 2D) = "white" {}
-        _GrungeOffsetScale ("Grunge Offset (XYZ), Grunge Scale (W)", Vector) = (0,0,0,1)
-        _GrungeStrength ("Grunge Strength", Range(0, 1)) = 1.0
-        [Toggle(MULTIPLY_GRUNGE)] _MultiplyGrunge ("Multiply Grunge", Int) = 0
-        [NoScaleOffset] _MSOTex ("Metallic (R), Smoothness (G), Occlusion (B), Inv. Grunge Intensity (A)", 2D) = "black" {}
-        // _DebugM ("Debug M", Range(0, 1)) = 0
-        // _DebugS ("Debug S", Range(0, 1)) = 0
-        // _DebugO ("Debug O", Range(0, 1)) = 0
-        // _DebugG ("Debug G", Range(0, 1)) = 0
+        [NoScaleOffset]_OverlayTex ("Overlay (RGB)", 2D) = "white" {}
+        _OverlayOffset ("Overlay Offset (XYZ)", Vector) = (0,0,0,0)
+        _OverlayScale ("Overlay Scale", Float) = 1.0
+        [Toggle(MULTIPLY_OVERLAY)] _MultiplyOverlay ("Multiply Overlay", Int) = 0
+        [NoScaleOffset] _MSOTex ("Metallic (R), Smoothness (G), Occlusion (B), Overlay Intensity (A)", 2D) = "white" {}
+        _MMult ("Metallic Multiplier", Range(0, 1)) = 0.0
+        _SMult ("Smoothness Multiplier", Range(0, 1)) = 0.5
+        _OMult ("Occlusion Multiplier", Range(0, 1)) = 0.0
+        _LMult ("Overlay Multiplier", Range(0, 1)) = 1.0
         [NoScaleOffset] _NormalTex ("Normal Map", 2D) = "bump" {}
         [NoScaleOffset] _EmissionTex ("Emission (RGB)", 2D) = "black" {}
         _OutlineWidth ("Outline Width", Float) = 0.1
@@ -26,26 +26,26 @@
 		
 		CGPROGRAM
 		#pragma surface surf Standard fullforwardshadows vertex:vert
-        #pragma shader_feature MULTIPLY_GRUNGE
+        #pragma shader_feature MULTIPLY_OVERLAY
         
 		fixed4 _Color;
 		sampler2D _MainTex;
-        sampler2D _GrungeTex;
+        sampler2D _OverlayTex;
         sampler2D _MSOTex;
         sampler2D _NormalTex;
         sampler2D _EmissionTex;
 
-        // float _DebugM;
-        // float _DebugS;
-        // float _DebugO;
-        // float _DebugG;
+        float _MMult;
+        float _SMult;
+        float _OMult;
+        float _LMult;
 
-        float4 _GrungeOffsetScale;
-        float _GrungeStrength;
+        float4 _OverlayOffset;
+        float _OverlayScale;
 
 		struct Input {
 			float2 uv_MainTex;
-            float2 uv_GrungeTex;
+            float2 uv_OverlayTex;
 			float3 worldPos;
 			float3 worldNorm;
 		};
@@ -57,34 +57,31 @@
         }
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-            half3 grungeBlend = IN.worldNorm * IN.worldNorm;
-            grungeBlend *= grungeBlend;     // hardcoded pow(4) for a sharper transition
-            grungeBlend /= dot(grungeBlend, float3(1,1,1));
-            fixed4 gx = tex2D(_GrungeTex, (IN.worldPos.zy / _GrungeOffsetScale.w) + _GrungeOffsetScale.zy) ;
-            fixed4 gy = tex2D(_GrungeTex, (IN.worldPos.xz / _GrungeOffsetScale.w) + _GrungeOffsetScale.xz) ;
-            fixed4 gz = tex2D(_GrungeTex, (IN.worldPos.xy / _GrungeOffsetScale.w) + _GrungeOffsetScale.xy) ;
-            fixed4 g = gx * grungeBlend.x + gy * grungeBlend.y + gz * grungeBlend.z;
+            half3 ovrlBlend = IN.worldNorm * IN.worldNorm;
+            ovrlBlend *= ovrlBlend;     // hardcoded pow(4) for a sharper transition
+            ovrlBlend /= dot(ovrlBlend, float3(1,1,1));
+            fixed4 ovrlX = tex2D(_OverlayTex, (IN.worldPos.zy / _OverlayScale) + _OverlayOffset.zy);
+            fixed4 ovrlY = tex2D(_OverlayTex, (IN.worldPos.xz / _OverlayScale) + _OverlayOffset.xz);
+            fixed4 ovrlZ = tex2D(_OverlayTex, (IN.worldPos.xy / _OverlayScale) + _OverlayOffset.xy);
+            fixed4 ovrl = (ovrlX * ovrlBlend.x + ovrlY * ovrlBlend.y + ovrlZ * ovrlBlend.z);
 
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
             fixed4 mso = tex2D(_MSOTex, IN.uv_MainTex);
-            // mso.r = _DebugM;
-            // mso.g = _DebugS;
-            // mso.b = _DebugO;
-            // mso.a = _DebugG;
-            #ifdef MULTIPLY_GRUNGE
-                g = lerp(fixed4(1,1,1,1), g, _GrungeStrength * (1.0 - mso.a));
-			    o.Albedo = c.rgb * g.rgb;
+
+            #ifdef MULTIPLY_OVERLAY
+                ovrl = lerp(fixed4(1,1,1,1), ovrl, _LMult * mso.a);
+			    o.Albedo = c.rgb * ovrl.rgb;
             #else
-                g = lerp(fixed4(0,0,0,0), g, _GrungeStrength * (1.0 - mso.a));
-                o.Albedo = lerp(c.rgb, g.rgb, g.a);
+                ovrl = lerp(fixed4(0,0,0,0), ovrl, _LMult * mso.a);
+                o.Albedo = lerp(c.rgb, ovrl.rgb * _Color.rgb, ovrl.a);
             #endif
 
 			o.Alpha = c.a;
             fixed4 e = tex2D(_EmissionTex, IN.uv_MainTex) * _Color;
             o.Emission = e.rgb;
-            o.Metallic = mso.r;
-            o.Smoothness = mso.g;
-            o.Occlusion = 1.0 - mso.b;
+            o.Metallic = mso.r * _MMult;
+            o.Smoothness = mso.g * _SMult;
+            o.Occlusion = 1.0 - (mso.b * _OMult);
             o.Normal = UnpackNormal(tex2D(_NormalTex, IN.uv_MainTex));
 		}
 
