@@ -12,7 +12,7 @@
         _SMult ("Smoothness Multiplier", Range(0, 1)) = 0.5
         _OMult ("Occlusion Multiplier", Range(0, 1)) = 0.0
         _LMult ("Overlay Multiplier", Range(0, 1)) = 1.0
-        [NoScaleOffset] _NormalTex ("Normal Map", 2D) = "bump" {}
+        [NoScaleOffset] _BumpMap ("Normal Map", 2D) = "bump" {}
         [NoScaleOffset] _EmissionTex ("Emission (RGB)", 2D) = "black" {}
         _OutlineWidth ("Outline Width", Float) = 0.1
         [Toggle(FIXED_OUTLINE_WIDTH)] _ToggleFixedOutlineWidth ("Fixed Outline Width", Int) = 0
@@ -32,7 +32,7 @@
 		sampler2D _MainTex;
         sampler2D _OverlayTex;
         sampler2D _MSOTex;
-        sampler2D _NormalTex;
+        sampler2D _BumpMap;
         sampler2D _EmissionTex;
 
         float _MMult;
@@ -82,7 +82,7 @@
             o.Metallic = mso.r * _MMult;
             o.Smoothness = mso.g * _SMult;
             o.Occlusion = 1.0 - (mso.b * _OMult);
-            o.Normal = UnpackNormal(tex2D(_NormalTex, IN.uv_MainTex));
+            o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex));
 		}
 
 		ENDCG
