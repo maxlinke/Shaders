@@ -99,8 +99,6 @@
             #pragma fragment simpleOutlineFrag
             #pragma multi_compile_fog
             #pragma shader_feature FIXED_OUTLINE_WIDTH
-
-            #include "UnityCG.cginc"
             #include "Outlines.cginc"
 
             ENDCG
@@ -120,10 +118,9 @@
             #pragma vertex simpleOutlineVert
             #pragma fragment simpleOutlineFrag
             #pragma multi_compile_fog
+            #pragma multi_compile ___ UNITY_HDR_ON
             #pragma shader_feature FIXED_OUTLINE_WIDTH
             #define OUTLINES_DEFERRED
-
-            #include "UnityCG.cginc"
             #include "Outlines.cginc"
 
             ENDCG
