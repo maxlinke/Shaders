@@ -14,6 +14,7 @@
         _LMult ("Overlay Multiplier", Range(0, 1)) = 1.0
         [NoScaleOffset] _BumpMap ("Normal Map", 2D) = "bump" {}
         [NoScaleOffset] _EmissionTex ("Emission (RGB)", 2D) = "black" {}
+        _OutlineTint ("Outline Tint", Color) = (0,0,0,0)
         _OutlineWidth ("Outline Width", Float) = 0.1
         [Toggle(FIXED_OUTLINE_WIDTH)] _ToggleFixedOutlineWidth ("Fixed Outline Width", Int) = 0
         [PerRendererData] _Scale ("Scale", Vector) = (1,1,1,1)

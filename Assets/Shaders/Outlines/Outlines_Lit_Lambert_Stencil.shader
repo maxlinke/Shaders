@@ -3,6 +3,7 @@
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+        _OutlineTint ("Outline Tint", Color) = (0,0,0,0)
         _OutlineWidth ("Outline Width", Float) = 0.1
         [Toggle(FIXED_OUTLINE_WIDTH)] _ToggleFixedOutlineWidth ("Fixed Outline Width", Int) = 0
         [PerRendererData] _Scale ("Scale", Vector) = (1,1,1,1)

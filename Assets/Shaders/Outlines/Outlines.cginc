@@ -1,5 +1,6 @@
 #include "UnityCG.cginc"
 
+fixed4 _OutlineTint;
 float _OutlineWidth;
 float4 _Scale;
 
@@ -22,13 +23,15 @@ float4 CalculateOutlineClipPos (float4 vertex, float3 normal) {
 struct simpleOutlineAppdata {
     float4 vertex : POSITION;
     float4 normal : NORMAL;
+    float4 color : COLOR;
 };
 
 struct simpleOutlineV2F {
     float4 pos : SV_POSITION;
     UNITY_FOG_COORDS(1)
+    float4 col : TEXCOORD2;
     #if defined (SLICE)
-    float slice : TEXCOORD2;
+    float slice : TEXCOORD3;
     #endif
 };
 
@@ -47,6 +50,7 @@ simpleOutlineV2F simpleOutlineVert (simpleOutlineAppdata v) {
     simpleOutlineV2F o;
     o.pos = CalculateOutlineClipPos(v.vertex, v.normal);
     UNITY_TRANSFER_FOG(o, o.pos);
+    o.col = _OutlineTint * v.color;
     #if defined (SLICE)
         float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
         o.slice = dot(worldPos - _SlicePos.xyz, _SliceNormal.xyz);
@@ -59,7 +63,7 @@ simpleOutlineFragOut simpleOutlineFrag (simpleOutlineV2F i) {
         clip(i.slice);
     #endif
     simpleOutlineFragOut o;
-    fixed4 col = fixed4(0,0,0,1);
+    fixed4 col = i.col;
     #if defined(OUTLINES_DEFERRED)
         o.gBuffer0 = fixed4(0,0,0,1);
         o.gBuffer1 = fixed4(0,0,0,0);
