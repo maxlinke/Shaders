@@ -1,17 +1,15 @@
 fileFormatVersion: 2
-guid: 4aa869f7795ffec47b5d8f9c40a3d00e
-timeCreated: 1604499508
+guid: d3ba418f45e14ec46a05ca83e17b3057
+timeCreated: 1604501414
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
-    100002: GG_Agatha_Hair
     400000: //RootNode
-    400002: GG_Agatha_Hair
-    2300000: GG_Agatha_Hair
-    3300000: GG_Agatha_Hair
-    4300000: GG_Agatha_Hair
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Hair
   materials:
     importMaterials: 0
     materialName: 0
@@ -41,7 +39,7 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    importBlendShapes: 0
+    importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1

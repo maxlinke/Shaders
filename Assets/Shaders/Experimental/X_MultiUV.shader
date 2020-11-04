@@ -19,8 +19,8 @@
         sampler2D _SecTex;
 
 		struct Input {
-			float2 uv_MainTex : TEXCOORD0;
-            float2 uv2_SecTex : TEXCOORD1;
+            float2 uv_MainTex;
+            float2 uv2_SecTex;
 		};
 
 		fixed4 _Color;
