@@ -1,8 +1,8 @@
-﻿Shader "Custom/GGHair" {
+﻿Shader "Custom/Outlines/GGHair" {
 
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
-		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_MainTex ("Albedo (RGB), AO (A)", 2D) = "white" {}
         [Normal] _BumpMap ("Normal Map", 2D) = "bump"  {}
 
         _HairSpecTex ("Hair Spec Texture", 2D) = "white" {}
@@ -12,6 +12,11 @@
         _HairEmission ("Hair Emission", Color) = (0.5,0.5,0.5,1)
         _HairSmoothness ("Hair Smoothness", Range(0, 1)) = 0.5
         _HairMetallic ("Hair Metallic", Range(0, 1)) = 0.0
+        
+        _OutlineTint ("Outline Tint", Color) = (0,0,0,0)
+        _OutlineWidth ("Outline Width", Float) = 0.1
+        [Toggle(FIXED_OUTLINE_WIDTH)] _ToggleFixedOutlineWidth ("Fixed Outline Width", Int) = 0
+        [PerRendererData] _Scale ("Scale", Vector) = (1,1,1,1)
 	}
 
 	SubShader {
@@ -20,7 +25,7 @@
 		LOD 200
 		
 		CGPROGRAM
-        // #include "GGHair.cginc"
+
 		#pragma surface surf Standard fullforwardshadows vertex:vert
 
 		#pragma target 3.5
@@ -31,10 +36,10 @@
         sampler2D _BumpMap;
 
 		struct Input {
-            float2 uv_HairAnisoTex;
-			float2 uv2_MainTex;
-            float2 uv2_HairSpecTex;
-            float2 uv2_BumpMap;
+			float2 uv_MainTex;
+            float2 uv_HairSpecTex;
+            float2 uv_BumpMap;
+            float2 uv2_HairAnisoTex;
             float3 viewDir;
             float3 worldUp;
 		};
@@ -53,20 +58,63 @@
 
         float GetAniso (Input IN) {
             float anisoDot = dot(IN.worldUp, IN.viewDir);
-            float2 anisoUV = IN.uv_HairAnisoTex - float2(0, (_MaxAnisoOffset * anisoDot));
+            float2 anisoUV = IN.uv2_HairAnisoTex - float2(0, (_MaxAnisoOffset * anisoDot));
             return tex2D(_HairAnisoTex, anisoUV).r;
         }
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-            o.Albedo = _Color * tex2D(_MainTex, IN.uv2_MainTex);
+            fixed4 c = _Color * tex2D(_MainTex, IN.uv_MainTex);
+            o.Albedo = c.rgb;
+            o.Occlusion = c.a;
+            float spec = GetAniso(IN) * tex2D(_HairSpecTex, IN.uv_HairSpecTex).r;
+            o.Emission = _HairEmission.rgb * spec * c.a;
+            o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
             o.Metallic = _HairMetallic;
             o.Smoothness = _HairSmoothness;
-            float spec = GetAniso(IN) * tex2D(_HairSpecTex, IN.uv2_HairSpecTex).r;
-            o.Emission = _HairEmission.rgb * spec;
-            o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv2_BumpMap));
             o.Alpha = 1.0;
 		}
+
 		ENDCG
+
+        Pass {
+            
+            Tags { "LightMode" = "ForwardBase" }
+
+            Cull Front
+
+            CGPROGRAM
+
+            #pragma vertex simpleOutlineVert
+            #pragma fragment simpleOutlineFrag
+            #pragma multi_compile_fog
+            #pragma shader_feature FIXED_OUTLINE_WIDTH
+            #include "Outlines.cginc"
+
+            ENDCG
+
+        }
+
+        Pass {
+
+            Tags { "LightMode" = "Deferred" }
+
+            Cull Front
+
+            CGPROGRAM
+
+            #pragma exclude_renderers nomrt
+
+            #pragma vertex simpleOutlineVert
+            #pragma fragment simpleOutlineFrag
+            #pragma multi_compile_fog
+            #pragma multi_compile ___ UNITY_HDR_ON
+            #pragma shader_feature FIXED_OUTLINE_WIDTH
+            #define OUTLINES_DEFERRED
+            #include "Outlines.cginc"
+
+            ENDCG
+
+        }
 	}
 	FallBack "Diffuse"
 }
