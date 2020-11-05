@@ -40,7 +40,8 @@
             float2 uv_HairSpecTex;
             float2 uv_BumpMap;
             float2 uv2_HairAnisoTex;
-            float3 viewDir;
+            // float3 viewDir;          // for some reason, this is nonsense when using a normal map in 5.6...
+            float3 worldPos;
             float3 worldUp;
 		};
 
@@ -56,8 +57,8 @@
         float _HairSmoothness;
         float _HairMetallic;
 
-        float GetAniso (Input IN) {
-            float anisoDot = dot(IN.worldUp, IN.viewDir);
+        float GetAniso (Input IN, float3 viewDir) {
+            float anisoDot = dot(IN.worldUp, viewDir);
             float2 anisoUV = IN.uv2_HairAnisoTex - float2(0, (_MaxAnisoOffset * anisoDot));
             return tex2D(_HairAnisoTex, anisoUV).r;
         }
@@ -66,12 +67,20 @@
             fixed4 c = _Color * tex2D(_MainTex, IN.uv_MainTex);
             o.Albedo = c.rgb;
             o.Occlusion = c.a;
-            float spec = GetAniso(IN) * tex2D(_HairSpecTex, IN.uv_HairSpecTex).r;
+            float3 viewDir = normalize(_WorldSpaceCameraPos - IN.worldPos);
+            // float3 viewDir = IN.viewDir;
+            float spec = GetAniso(IN, viewDir) * tex2D(_HairSpecTex, IN.uv_HairSpecTex).r;
             o.Emission = _HairEmission.rgb * spec * c.a;
             o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
             o.Metallic = _HairMetallic;
             o.Smoothness = _HairSmoothness;
             o.Alpha = 1.0;
+
+            // o.Albedo = fixed3(0,0,0);
+            // o.Metallic = 0;
+            // o.Smoothness = 0;
+            // o.Occlusion = 0;
+            // o.Emission = viewDir;
 		}
 
 		ENDCG
