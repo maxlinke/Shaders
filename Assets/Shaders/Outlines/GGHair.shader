@@ -5,13 +5,13 @@
 		_MainTex ("Albedo (RGB), AO (A)", 2D) = "white" {}
         [Normal] _BumpMap ("Normal Map", 2D) = "bump"  {}
 
-        _HairSpecTex ("Hair Spec Texture", 2D) = "white" {}
-        _HairAnisoTex ("Hair Aniso Gradient", 2D) = "white" {}
-        _MaxAnisoOffset ("Max Aniso Offset", Range(0, 1)) = 1.0
-
-        _HairEmission ("Hair Emission", Color) = (0.5,0.5,0.5,1)
         _HairSmoothness ("Hair Smoothness", Range(0, 1)) = 0.5
         _HairMetallic ("Hair Metallic", Range(0, 1)) = 0.0
+
+        _HairEmission ("Emissive Aniso Color", Color) = (0.5,0.5,0.5,1)
+        _HairSpecTex ("Aniso Texture", 2D) = "white" {}
+        _HairAnisoTex ("Aniso Gradient", 2D) = "white" {}
+        _MaxAnisoOffset ("Max Aniso Offset", Range(0, 1)) = 1.0
         
         _OutlineTint ("Outline Tint", Color) = (0,0,0,0)
         _OutlineWidth ("Outline Width", Float) = 0.1
