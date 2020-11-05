@@ -14,6 +14,7 @@
 		
 		CGPROGRAM
 		#pragma surface surf Lambert
+        #pragma target 3.0
 
 		sampler2D _MainTex;
         sampler2D _SecTex;
